@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kyzoid</title>
+  <link rel="stylesheet" href="reset.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div class="container">
+    <div class="content">
+      <h1 class="title absolute">Kyzoid</h1>
+      <div class="thumbnail">
+        <img class="justin" src="images/justin_upscale1.png" />
+        <div class="audio-player">
+          <div class="time-elapsed">
+            <span id="current-time">0:00</span>
+            <img class="button" data-playing="false" src="images/play.svg" width="24" height="24" />
+            <span>3:34</span>
+          </div>
+          <div class="bar">
+            <div id="bar-elapsed" class="bar-elapsed" style="width: 0%;">
+              <div class="thumb"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="audio-info">
+        <span class="audio-title">What Do You Mean it's 1985?</span>
+        <span class="audio-artist">Justin Bieber - TRONIBOX Remix</span>
+      </div>
+    </div>
+    <audio class="hidden" id="audio" controls>
+      <source src="/song.mp3" type="audio/mp3">
+    </audio>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>
