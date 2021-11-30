@@ -3,6 +3,10 @@ window.addEventListener('DOMContentLoaded', () => {
   const currentTimeDOM = document.getElementById('current-time');
   const barElapsedDOM = document.getElementById('bar-elapsed');
   const button = document.querySelector('.audio-player > .time-elapsed > .button');
+  let audioInitialized = false;
+
+  let context, src, analyser, bufferLength, dataArray;
+  let barWidth = 0;
 
   button.addEventListener('click', (event) => {
     const isPlaying = event.target.dataset.playing;
@@ -11,6 +15,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if (isPlaying === 'false') {
       audio.play();
+
+      if (!audioInitialized) {
+        audioInitialized = true;
+        context = new AudioContext();
+        src = context.createMediaElementSource(audio);
+        analyser = context.createAnalyser();
+
+        src.connect(analyser);
+        analyser.connect(context.destination);
+      
+        analyser.fftSize = 256;
+      
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+        barWidth = (WIDTH / bufferLength) * 2.5;
+      }
     } else {
       audio.pause();
     }
@@ -30,29 +50,16 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const context = new AudioContext();
-  const src = context.createMediaElementSource(audio);
-  const analyser = context.createAnalyser();
-
   const canvas = document.getElementById("canvas");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   const ctx = canvas.getContext("2d");
-
-  src.connect(analyser);
-  analyser.connect(context.destination);
-
-  analyser.fftSize = 256;
-
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
 
   let barHeight;
   let x = 0;
 
   let WIDTH = canvas.width;
   let HEIGHT = canvas.height;
-  let barWidth = (WIDTH / bufferLength) * 2.5;
 
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
@@ -64,24 +71,25 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const renderFrame = () => {
     requestAnimationFrame(renderFrame);
+    if (audioInitialized) {
+      x = 0;
 
-    x = 0;
-
-    analyser.getByteFrequencyData(dataArray);
-
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
-
-    for (let i = 0; i < bufferLength; i++) {
-      barHeight = dataArray[i];
-
-      const r = 20 + barHeight;
-      const g = 255 - barHeight;
-      const b = 255;
-
-      ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ", 0.8)";
-      ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
-
-      x += barWidth + 1;
+      analyser.getByteFrequencyData(dataArray);
+  
+      ctx.clearRect(0, 0, WIDTH, HEIGHT);
+  
+      for (let i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i];
+  
+        const r = 20 + barHeight;
+        const g = 255 - barHeight;
+        const b = 255;
+  
+        ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ", 0.8)";
+        ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+  
+        x += barWidth + 1;
+      }
     }
   }
 
