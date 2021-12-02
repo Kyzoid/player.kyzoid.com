@@ -1,5 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
   const audio = document.getElementById("audio");
+  audio.volume = 0.5;
   const currentTimeDOM = document.getElementById('current-time');
   const barElapsedDOM = document.getElementById('bar-elapsed');
   const button = document.getElementById('play-button');
@@ -69,12 +70,21 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  soundButton.addEventListener('click', () => {
+    console.log(audio.volume)
+    const isMuted = audio.volume === 0;
+    audio.volume = isMuted ? 0.5 : 0;
+    soundButton.src = isMuted ? 'images/volume_middle.svg' : 'images/volume_down.svg';
+    volume.style.height = isMuted ? '50%' : '0%';
+  });
+
   soundMenu.addEventListener('mousemove', updateVolume);
 
   soundMenu.addEventListener('mousedown', (event) => {
     soundModifying = true;
     updateVolume(event);
   });
+
   window.addEventListener('mouseup', () => { soundModifying = false; });
 
   audio.addEventListener('timeupdate', () => {
