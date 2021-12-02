@@ -19,9 +19,23 @@
         <img class="justin" src="images/justin_upscale1.png" />
         <div class="audio-player">
           <div class="time-elapsed">
-            <span id="current-time">0:00</span>
-            <img class="button" data-playing="false" src="images/play.svg" width="24" height="24" />
-            <span>3:34</span>
+            <div class="left-elapsed">
+              <img id="play-button" class="button" data-playing="false" src="images/play.svg" width="24" height="24" />
+              <div>
+                <span id="current-time">0:00</span>
+                <span>/ 3:34</span>
+              </div>
+            </div>
+            <div class="sound-container">
+              <div id="sound-menu">
+                <div id="sound-bar" class="sound-bar">
+                  <div id="volume" class="volume" style="height: 50%;">
+                    <div class="thumb"></div>
+                  </div>
+                </div>
+              </div>
+              <img id="sound-button" class="button" src="images/volume_middle.svg" width="22" />
+            </div>
           </div>
           <div class="bar">
             <div id="bar-elapsed" class="bar-elapsed" style="width: 0%;">

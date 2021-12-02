@@ -2,7 +2,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const audio = document.getElementById("audio");
   const currentTimeDOM = document.getElementById('current-time');
   const barElapsedDOM = document.getElementById('bar-elapsed');
-  const button = document.querySelector('.audio-player > .time-elapsed > .button');
+  const button = document.getElementById('play-button');
+  const soundBar = document.getElementById('sound-bar');
+  const soundMenu = document.getElementById('sound-menu');
+  const soundButton = document.getElementById('sound-button');
+  const volume = document.getElementById('volume');
+  let soundModifying = false;
   let audioInitialized = false;
 
   let context, src, analyser, bufferLength, dataArray;
@@ -35,6 +40,42 @@ window.addEventListener('DOMContentLoaded', () => {
       audio.pause();
     }
   });
+
+  const updateVolume = (event) => {
+    if (soundModifying) {
+      const { bottom: barBottom, height: barHeight } = soundBar.getBoundingClientRect();
+      const { clientY } = event;
+      let volumeValue = Math.floor(((barBottom - clientY) / barHeight) * 100);
+      if (volumeValue > 100) {
+        volumeValue = 100;
+      }
+      if (volumeValue < 0) {
+        volumeValue = 0;
+      }
+      volume.style.height = volumeValue > 100 ? '100%' : `${volumeValue}%`;
+      audio.volume = volumeValue / 100;
+
+      if (volumeValue > 60) {
+        soundButton.src = 'images/volume_up.svg';
+      }
+
+      if (volumeValue > 0 && volumeValue < 60) {
+        soundButton.src = 'images/volume_middle.svg';
+      }
+
+      if (volumeValue === 0) {
+        soundButton.src = 'images/volume_down.svg';
+      }
+    }
+  };
+
+  soundMenu.addEventListener('mousemove', updateVolume);
+
+  soundMenu.addEventListener('mousedown', (event) => {
+    soundModifying = true;
+    updateVolume(event);
+  });
+  window.addEventListener('mouseup', () => { soundModifying = false; });
 
   audio.addEventListener('timeupdate', () => {
     const s = parseInt(audio.currentTime % 60);
